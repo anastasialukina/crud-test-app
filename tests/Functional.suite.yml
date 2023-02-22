@@ -7,6 +7,8 @@
 
 actor: FunctionalTester
 modules:
-    enabled:
-        # add a framework module here
+  enabled:
+    - Laravel:
+        environment_file: .env.testing
+          - \AppBundle\Helper\Functional
 step_decorators: ~

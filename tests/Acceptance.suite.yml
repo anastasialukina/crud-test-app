@@ -6,9 +6,13 @@
 
 actor: AcceptanceTester
 modules:
-    enabled:
-        - PhpBrowser:
-            url: http://localhost/myapp
+  enabled:
+    - WebDriver:
+        browser: chrome
+        url: http://127.0.0.1:8000
+    - Laravel:
+        part: ORM
+        environment_file: .env.testing
 # add Codeception\Step\Retry trait to AcceptanceTester to enable retries
 step_decorators:
     - Codeception\Step\ConditionalAssertion
