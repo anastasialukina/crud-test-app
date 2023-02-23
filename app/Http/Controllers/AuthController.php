@@ -31,13 +31,13 @@ class AuthController extends Controller
                 'message' => 'Unauthorized',
             ], 401);
         }
-        $userId = Auth::id();
+        $user = Auth::user();
         return response()->json([
             'status' => 'success',
-            'user' => $userId,
+            'user' => $user,
             'authorisation' => [
                 'token' => $token,
-//                'type' => 'bearer',
+                'type' => 'bearer',
             ]
         ]);
 
@@ -86,6 +86,14 @@ class AuthController extends Controller
                 'token' => Auth::refresh(),
                 'type' => 'bearer',
             ]
+        ]);
+    }
+
+    public function user()
+    {
+        return response()->json([
+            'status' => 'success',
+            'user' => Auth::user(),
         ]);
     }
 }
