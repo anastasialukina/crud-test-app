@@ -26,3 +26,7 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('refresh', 'refresh');
     Route::get('user', 'user');
 });
+
+Route::match(['get', 'post'], 'store', function () {
+    //
+});
