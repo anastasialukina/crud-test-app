@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\JsonDataController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,13 +21,14 @@ use Illuminate\Support\Facades\Route;
 });*/
 
 Route::controller(AuthController::class)->group(function () {
-    Route::post('login', 'login');
-    Route::post('register', 'register');
-    Route::post('logout', 'logout');
-    Route::post('refresh', 'refresh');
-    Route::get('user', 'user');
+    Route::post('login', 'login')->name('login');
+    Route::post('register', 'register')->name('register');
+    Route::post('logout', 'logout')->name('logout');
+    Route::post('refresh', 'refresh')->name('refresh');
+    Route::get('user', 'user')->name('user');
 });
 
-Route::match(['get', 'post'], 'store', function () {
-    //
-});
+Route::get('/data/{token}', [JsonDataController::class, 'index'])->name('data.index');
+Route::get('/data/create/{token}', [JsonDataController::class, 'create'])->name('data.create');
+Route::match(['get', 'post'], '/data/store', [JsonDataController::class, 'store'])->name('data.store');
+Route::get('/data/{id}/{token}', [JsonDataController::class, 'show'])->name('data.show');

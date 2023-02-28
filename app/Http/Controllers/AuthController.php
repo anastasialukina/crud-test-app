@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Token;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -13,34 +15,40 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'refresh']]);
     }
 
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
         $credentials = $request->only('email', 'password');
 
-        $token = Auth::attempt($credentials);
-        if (!$token) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized',
-            ], 401);
-        }
-        $user = Auth::user();
-        return response()->json([
-            'status' => 'success',
-            'user' => $user,
-            'authorisation' => [
-                'token' => $token,
-                'type' => 'bearer',
-            ]
-        ]);
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            $token = JWTAuth::fromUser($user);
+            $expiresAt = now()->addMinutes(5);
 
+            $tokenRecord = Token::create([
+                'user_id' => Auth::id(),
+                'access_token' => $token,
+                'expires_at' => $expiresAt,
+                'last_used_at' => now()
+            ]);
+
+
+            return response()->json([
+                'status' => 'success',
+                'user' => $user,
+                'authorisation' => [
+                    'token' => $token,
+                    'type' => 'bearer',
+                    'expires_at' => $expiresAt->toIso8601String(),
+                ]
+            ]);
+        }
+
+        return response()->json([
+            'error' => 'Invalid credentials',
+        ], 401);
     }
 
     public function register(Request $request)
@@ -56,7 +64,17 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
         $token = JWTAuth::fromUser($user);
+        $expiresAt = now()->addMinutes(5);
+
+        $tokenRecord = Token::create([
+            'user_id' => Auth::id(),
+            'access_token' => $token,
+            'expires_at' => $expiresAt,
+            'last_used_at' => now()
+        ]);
+
         return response()->json([
             'status' => 'success',
             'message' => 'User created successfully',
@@ -79,11 +97,23 @@ class AuthController extends Controller
 
     public function refresh()
     {
+        $user = Auth::user();
+        $token = JWTAuth::getToken();
+        $new_token = JWTAuth::refresh($token);
+        $expiresAt = now()->addMinutes(5);
+
+        $tokenRecord = Token::create([
+            'user_id' => Auth::id(),
+            'access_token' => $new_token,
+            'expires_at' => $expiresAt,
+            'last_used_at' => now()
+        ]);
+
         return response()->json([
             'status' => 'success',
-            'user' => Auth::user(),
+            'user' => $user,
             'authorisation' => [
-                'token' => Auth::refresh(),
+                'token' => $new_token,
                 'type' => 'bearer',
             ]
         ]);
