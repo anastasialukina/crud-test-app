@@ -34,6 +34,6 @@ Route::get('/data/edit/{id}/', [JsonDataController::class, 'edit'])->name('data.
 Route::match(['get', 'post'], '/data/update/{id}', [JsonDataController::class, 'update'])->name('data.update');
 Route::delete('/data/delete/{id}', [JsonDataController::class, 'destroy'])->name('data.destroy');
 
-Route::get('/data/index/', [JsonDataController::class, 'index'])->name('data.index');
+Route::get('/data/index', [JsonDataController::class, 'index'])->name('data.index');
 Route::get('/data/{id}/', [JsonDataController::class, 'show'])->name('data.show');
 
