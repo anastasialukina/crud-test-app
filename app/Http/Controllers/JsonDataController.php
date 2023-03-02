@@ -22,8 +22,8 @@ class JsonDataController extends Controller
     public function index(): Application|Factory|View
     {
         $data = JsonData::all();
-        $token = Auth::getToken();
-        return view('data.index')->with(compact('data', 'token'));
+
+        return view('data.index')->with(compact('data'));
     }
 
     public function create(): Factory|View|Application

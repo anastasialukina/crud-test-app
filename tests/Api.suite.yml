@@ -2,5 +2,5 @@ actor: ApiTester
 modules:
   enabled:
     - REST:
-        url: api/
+        url: /
         depends: Laravel

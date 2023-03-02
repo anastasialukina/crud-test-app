@@ -19,7 +19,7 @@ class CreateUserCest
         $I->wantToTest('Login is success');
 
         // send credential data
-        $I->sendPOST('login', ['email' => 'test@example.com', 'password' => 'password']);
+        $I->sendPOST('/api/login', ['email' => 'test@example.com', 'password' => 'password']);
 
         // login success
         $I->seeResponseCodeIs(200);
@@ -33,7 +33,7 @@ class CreateUserCest
         $I->wantToTest('Login is failed');
 
         // send invalid credential data
-        $I->sendPOST('login', ['email' => 'test@example.com', 'password' => '123456']);
+        $I->sendPOST('/api/login', ['email' => 'test@example.com', 'password' => '123456']);
 
         // check expected response code
         $I->seeResponseCodeIs(401);
@@ -55,7 +55,7 @@ class CreateUserCest
         $I->amBearerAuthenticated($token);
 
         // send request
-        $I->sendGET('user');
+        $I->sendGET('/api/user');
 
         // check expected response code
         $I->seeResponseCodeIs(200);

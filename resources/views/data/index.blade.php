@@ -1,7 +1,7 @@
-
 <ul>
     @foreach ($data as $item)
         <li>
+            <p>{{ $item->id }}</p>
             <strong>{{ $item->user_id }}</strong> (User ID)
 
             @if ($item->list !== null)
