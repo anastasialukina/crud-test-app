@@ -1,6 +1,6 @@
 @inject('jsonHelper', 'App\Helpers\JsonHelper')
 
-<ul>
+<ul class="json-list">
     @foreach ($data as $item)
         <li>
             <p>{{ $item->id }}</p>
@@ -20,11 +20,16 @@
 </ul>
 
 <script>
-    function toggleJson(button) {
-        let div = button.nextElementSibling;
-        let isOpen = div.classList.contains('json-expanded');
-        div.classList.toggle('json-expanded', !isOpen);
-        div.classList.toggle('json-collapsed', isOpen);
-        button.textContent = isOpen ? '+' : '-';
-    }
+    document.querySelectorAll('.toggle-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const li = button.parentNode;
+            const ul = li.querySelector('ul');
+
+            if (ul) {
+                const shouldShow = ul.style.display === 'none';
+                ul.style.display = shouldShow ? 'block' : 'none';
+                button.innerText = shouldShow ? '-' : '+';
+            }
+        });
+    });
 </script>

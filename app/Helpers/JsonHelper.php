@@ -4,25 +4,20 @@ namespace App\Helpers;
 
 class JsonHelper
 {
-    public static function convertJsonToHtmlList($jsonObject, $level = 0): string
+    public static function convertJsonToHtmlList($jsonObject, $nested = false): string
     {
-        //Decode JSON
+        // Decode JSON
         $data = json_decode($jsonObject, true);
 
-        //Create an HTML list
-        $html = '<ul>';
+        // Create an HTML list
+        $html = '<ul' . ($nested ? ' style="display: none;"' : '') . '>';
 
         foreach ($data as $key => $value) {
-            //If the value of $value is an array, then recursively call the function.
+            // If the value of $value is an array, then recursively call the function.
             if (is_array($value)) {
-                $html .= '<li>';
-                $html .= '<button class="json-expand" onclick="toggleJson(this)">+</button>';
-                $html .= '<span class="json-key">' . $key . '</span>';
-                $html .= '<div class="json-value json-collapsed">';
-                $html .= self::convertJsonToHtmlList(json_encode($value), $level + 1);
-                $html .= '</div></li>';
+                $html .= '<li><button class="toggle-button">+</button>' . $key . ': ' . self::convertJsonToHtmlList(json_encode($value), true) . '</li>';
             } else {
-                $html .= '<li>' . '<span class="json-key">' . $key . '</span>: ' . '<span class="json-value">' . $value . '</span>' . '</li>';
+                $html .= '<li>' . $key . ': ' . $value . '</li>';
             }
         }
 
