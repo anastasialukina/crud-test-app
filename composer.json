@@ -17,6 +17,7 @@
         "php-open-source-saver/jwt-auth": "^2.1"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.8",
         "codeception/codeception": "^5.0",
         "codeception/module-asserts": "^3.0",
         "codeception/module-laravel": "^3.1",

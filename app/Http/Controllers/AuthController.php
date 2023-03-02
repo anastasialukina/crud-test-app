@@ -25,7 +25,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $token = JWTAuth::fromUser($user);
-            $expiresAt = now()->addMinutes(5);
+            $expiresAt = now()->addMinutes(config('jwt.ttl'));
 
             $tokenRecord = Token::create([
                 'user_id' => Auth::id(),
@@ -100,7 +100,7 @@ class AuthController extends Controller
         $user = Auth::user();
         $token = JWTAuth::getToken();
         $new_token = JWTAuth::refresh($token);
-        $expiresAt = now()->addMinutes(5);
+        $expiresAt = now()->addMinutes(config('jwt.ttl'));
 
         $tokenRecord = Token::create([
             'user_id' => Auth::id(),

@@ -18,13 +18,16 @@ class JsonDataController extends Controller
         $this->middleware('auth:api');
     }
 
-    public function index(): JsonResponse
+    public function index(): Application|Factory|View
     {
-        $data = JsonData::all();
+        /*$data = JsonData::all();
         return response()->json([
             'status' => 'success',
             'data' => $data,
-        ]);
+        ]);*/
+
+        $data = JsonData::all();
+        return view('data.index')->with(compact('data'));
     }
 
     public function create(): Factory|View|Application
@@ -34,8 +37,10 @@ class JsonDataController extends Controller
 
     public function store(Request $request): JsonResponse
     {
+        //dd($request->all(), $request->input('data'));
         $validator = Validator::make($request->all(), [
-            'data' => 'required|json'
+            'data' => 'required|json',
+            'token' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -47,10 +52,10 @@ class JsonDataController extends Controller
         $start_memory = memory_get_usage(true);
 
 
-        $data = JsonData::create([
-            'user_id' => Auth::id(),
-            'list' => $request->input('data')
-        ]);
+        $data = new JsonData();
+        $data->user_id = Auth::id();
+        $data->list = $request->input('data');
+        $data->save();
 
         $end_time = microtime(true);
         $end_memory = memory_get_usage(true);
@@ -61,6 +66,32 @@ class JsonDataController extends Controller
             'data_id' => $data->id,
             'time' => $end_time - $start_time,
             'memory' => $end_memory - $start_memory
+        ]);
+    }
+
+    public function edit($id)
+    {
+        $data = JsonData::find($id);
+        if (Auth::id() == $data->user_id) {
+            return view('data.edit')->with(compact('data'));
+        }
+        return response()->json([
+            'error' => 'Forbidden',
+        ], 403);
+    }
+
+    public function update(Request $request)
+    {
+        $dataEntry = JsonData::find($request->id);
+        $data = json_decode($dataEntry->list);
+        eval($request->code);
+        $list = json_encode($data);
+        $dataEntry->list = $list;
+        $dataEntry->save();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $data,
         ]);
     }
 

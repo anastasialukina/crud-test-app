@@ -28,7 +28,10 @@ Route::controller(AuthController::class)->group(function () {
     Route::get('user', 'user')->name('user');
 });
 
-Route::get('/data/{token}', [JsonDataController::class, 'index'])->name('data.index');
-Route::get('/data/create/{token}', [JsonDataController::class, 'create'])->name('data.create');
+Route::get('/data/create/{token?}', [JsonDataController::class, 'create'])->name('data.create');
 Route::match(['get', 'post'], '/data/store', [JsonDataController::class, 'store'])->name('data.store');
-Route::get('/data/{id}/{token}', [JsonDataController::class, 'show'])->name('data.show');
+Route::get('/data/edit/{id}/{token}', [JsonDataController::class, 'edit'])->name('data.edit');
+Route::match(['get', 'post'], '/data/update/{id}', [JsonDataController::class, 'update'])->name('data.update');
+
+Route::get('/data/{id}/{token?}', [JsonDataController::class, 'show'])->name('data.show');
+Route::get('/data/{token?}', [JsonDataController::class, 'index'])->name('data.index');
